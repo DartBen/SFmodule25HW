@@ -15,6 +15,7 @@ namespace SFmodule25HW.AppContext
 
         public AppContext()
         {
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
