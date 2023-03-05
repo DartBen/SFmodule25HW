@@ -13,5 +13,6 @@ namespace SFmodule25HW.Models
         public int? ReleaseYear { get; set; }
         public string? Genre { get; set; }
         public string? Author { get; set; }
+        public User? user { get; set; }
     }
 }
