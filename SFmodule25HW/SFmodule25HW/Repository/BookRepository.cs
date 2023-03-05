@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using SFmodule25HW.Repository;
 using SFmodule25HW.AppContext;
+using SFmodule25HW.Models;
 
 namespace SFmodule25HW.Repository
 {
-    public class BookRepository : IRepository<Book>, IBookRepository
+    public class BookRepository : IRepository<Book>, IBookRepository, IBookRepositoryExtension
     {
         private AppContext.AppContext DB;
 
@@ -46,16 +47,112 @@ namespace SFmodule25HW.Repository
             return DB.Books.FirstOrDefault(u => u.Id == id);
         }
 
+        public void LendBook(Book book, User user)
+        {
+            user.Books.Add(book);
+            DB.SaveChanges();
+        }
+        public void ReturnBook(Book book, User user)
+        {
+            user.Books.Remove(book);
+            DB.SaveChanges();
+        }
+
+        public void UpdateAuthorById(int id, string author)
+        {
+            var book = GetById(id);
+            book.Author = author;
+            DB.SaveChanges();
+        }
+
+        public void UpdateGenreById(int id, string genre)
+        {
+            var book = GetById(id);
+            book.Genre = genre;
+            DB.SaveChanges();
+        }
+
         public void UpdateReleaseYearById(int id, int year)
         {
             var book = GetById(id);
-            book.releaseYear = year;
+            book.ReleaseYear = year;
             DB.SaveChanges();
+        }
+
+        public int BookCountByUser(User user)
+        {
+            return user.Books.Count();
+        }
+
+        public bool BookExist(string name, string autor)
+        {
+            return DB.Books.Where(b => b.Name == name & b.Author == autor).Any();
+        }
+
+        public bool BookIssuedToUser(User user, Book book)
+        {
+            return user.Books.Contains(book);
+        }
+
+        public List<Book> GetBooksByGenreAndDate(string genre, int yearAfter, int yearBefore)
+        {
+            return DB.Books.Where(b => b.ReleaseYear > yearAfter & b.ReleaseYear < yearBefore & b.Genre == genre).ToList();
+        }
+
+        public int GetBooksNumberByAutorInLibrary(string autor)
+        {
+            return DB.Books.Where(b => b.Equals(autor)).ToList().Count;
+        }
+
+        public int GetBooksNumberByGenreInLibrary(string genre)
+        {
+            return DB.Books.Where(b => b.Equals(genre)).ToList().Count;
+        }
+
+        public List<Book> GetBooksSortedByAlphabet()
+        {
+            return DB.Books.OrderBy(p => p.Name).ToList();
+        }
+
+        public List<Book> GetBooksSortedByReleaseYear()
+        {
+            return DB.Books.OrderByDescending(p => p.ReleaseYear).ToList();
+        }
+
+        public Book GetLastReleasedBook()
+        {
+            return DB.Books.OrderBy(p => p.ReleaseYear).First();
         }
     }
 
     public interface IBookRepository
     {
         void UpdateReleaseYearById(int id, int year);
+        void LendBook(Book book, User user);
+        void ReturnBook(Book book, User user);
+        void UpdateGenreById(int id, string genre);
+        void UpdateAuthorById(int id, string author);
+    }
+    public interface IBookRepositoryExtension
+    {
+        List<Book> GetBooksByGenreAndDate(string Genre, int yearAfter, int yearBefore);
+        int GetBooksNumberByAutorInLibrary(string autor);
+        int GetBooksNumberByGenreInLibrary(string genre);
+        Book GetLastReleasedBook();
+        List<Book> GetBooksSortedByAlphabet();
+        List<Book> GetBooksSortedByReleaseYear();
+        int BookCountByUser(User user);
+        bool BookExist(string name, string autor);
+        bool BookIssuedToUser(User user, Book book);
     }
 }
+//С помощью полученных знаний дополните репозитории методами, которые позволят совершать следующие действия:
+//Получать список книг определенного жанра и вышедших между определенными годами.  ++
+//Получать количество книг определенного автора в библиотеке. ++
+//Получать количество книг определенного жанра в библиотеке. ++
+//Получать булевый флаг о том, есть ли книга определенного автора и с определенным названием в библиотеке. ++
+//Получать булевый флаг о том, есть ли определенная книга на руках у пользователя. ++
+//Получать количество книг на руках у пользователя. ++
+//Получение последней вышедшей книги. ++
+//Получение списка всех книг, отсортированного в алфавитном порядке по названию. ++
+//Получение списка всех книг, отсортированного в порядке убывания года их выхода. ++

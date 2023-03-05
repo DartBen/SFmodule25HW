@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFmodule25HW.Repository;
 using SFmodule25HW.AppContext;
+using SFmodule25HW.Models;
 
 namespace SFmodule25HW.Repository
 {
@@ -16,6 +17,7 @@ namespace SFmodule25HW.Repository
         {
             DB = appContext;
         }
+
         public void CreateNewRecord(User record)
         {
             DB.Users.Add(record);

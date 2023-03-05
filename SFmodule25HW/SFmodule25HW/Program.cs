@@ -1,5 +1,6 @@
 ﻿using SFmodule25HW;
 using SFmodule25HW.Repository;
+using SFmodule25HW.Models;
 
 internal class Program
 {
@@ -19,19 +20,25 @@ internal class Program
             var book2 = new Book { Name = "book2" };
             var book3 = new Book { Name = "book3" };
 
-            // Добавление одиночного пользователя
-            UserRepos.CreateNewRecord(user3);
-            UserRepos.CreateNewRecord(user1);
-            UserRepos.CreateNewRecord(user2);
+            user2.Books.Add(book2);
+            //user2.Books.Add(book1);
 
+
+            // Добавление одиночного пользователя
             BookRepos.CreateNewRecord(book2);
             BookRepos.CreateNewRecord(book3);
             BookRepos.CreateNewRecord(book1);
 
-            //// Добавление нескольких пользователей
-            //db.Users.AddRange(user2, user1);
+            UserRepos.CreateNewRecord(user3);
+            UserRepos.CreateNewRecord(user1);
+            UserRepos.CreateNewRecord(user2);
+
+
 
             db.SaveChanges();
+
+            BookRepos.LendBook(book1, user2);
+            BookRepos.ReturnBook(book2, user2);
             ;
         }
     }
